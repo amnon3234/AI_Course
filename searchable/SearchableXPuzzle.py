@@ -38,6 +38,7 @@ class SearchableXPuzzle:
         :param state: state to create neighbors to
         :return: array of neighbors states
         """
+        SearchableState.checkInstance(state)
         neighbors = []
         row, col = searchFor0Pos(state, self.rowAndColAmount)
 
@@ -74,11 +75,17 @@ class SearchableXPuzzle:
         :param state: state to check
         :return: state is goal state ? true : false
         """
+        SearchableState.checkInstance(state)
         return state == self.goalState
 
     def getRoute(self, state):
-        if not isinstance(state, SearchableState):
-            return False
+        """
+        used to receive the route from start state
+
+        :param state:
+        :return: route from start state to this state
+        """
+        SearchableState.checkInstance(state)
         currentState = state
         fatherState = state.stateFather
         route = []

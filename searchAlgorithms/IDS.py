@@ -25,6 +25,12 @@ def DFS(problem, currentState, maxDepth, oList, cList):
 
 
 def IDS(problem):
+    """
+    Used to find goal state using the IDS algorithm
+
+    :param problem: x puzzle problem
+    :return: route to goal state
+    """
     if not isinstance(problem, SearchableXPuzzle):
         raise Exception('problem must be instance of SearchableXPuzzle')
     depth = 0
