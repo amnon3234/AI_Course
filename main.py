@@ -3,10 +3,16 @@ from searchAlgorithms.BFS import BFS
 from searchable.SearchableXPuzzle import SearchableXPuzzle
 from searchAlgorithms.IDS import IDS
 
-algoNumber = 1
-rowColSize = 4
-boardState = '1-2-3-4-5-6-7-8-9-10-11-12-13-0-14-15'
-goalState = '1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-0'
+
+def generateGoalState(matrixLength):
+    matrix = []
+    for row in range(matrixLength):
+        matrixRow = []
+        for col in range(matrixLength):
+            matrixRow.append(row * matrixLength + col + 1)
+        matrix.append(matrixRow)
+    matrix[matrixLength - 1][matrixLength - 1] = 0
+    return matrix
 
 
 def stringToMatrix(string, matrixLength):
@@ -20,5 +26,22 @@ def stringToMatrix(string, matrixLength):
     return matrix
 
 
-problem = SearchableXPuzzle(stringToMatrix(boardState, rowColSize), stringToMatrix(goalState, rowColSize))
-print(BFS(problem))
+def main():
+    iFile = open("input.txt", "r")
+    algo, size, state = int(iFile.readline().replace('\n', '')), int(iFile.readline().replace('\n', '')), \
+                        iFile.readline().replace('\n', '')
+    startState = stringToMatrix(state, size)
+    goalState = generateGoalState(size)
+    problem = SearchableXPuzzle(startState, goalState)
+
+    if algo == 1:
+        routeToGoal = IDS(problem)
+        print routeToGoal
+    elif algo == 2:
+        routeToGoal = BFS(problem)
+        print routeToGoal
+    elif algo == 3:
+        pass
+
+
+main()
