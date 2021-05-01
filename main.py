@@ -1,4 +1,5 @@
 # temp values
+from searchAlgorithms.BFS import BFS
 from searchable.SearchableXPuzzle import SearchableXPuzzle
 from searchAlgorithms.IDS import IDS
 
@@ -20,4 +21,4 @@ def stringToMatrix(string, matrixLength):
 
 
 problem = SearchableXPuzzle(stringToMatrix(boardState, rowColSize), stringToMatrix(goalState, rowColSize))
-print(IDS(problem))
+print(BFS(problem))
