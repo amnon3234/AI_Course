@@ -19,3 +19,6 @@ class SearchableState:
         if not isinstance(other, SearchableState):
             return False
         return self.stateCost - other.stateCost
+
+    def __str__(self):
+        return str(self.stateValue)

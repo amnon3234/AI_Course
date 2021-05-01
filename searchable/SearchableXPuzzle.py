@@ -1,3 +1,5 @@
+import copy
+
 from searchable.SearchableState import SearchableState
 
 
@@ -5,13 +7,13 @@ from searchable.SearchableState import SearchableState
 def searchFor0Pos(state, rowAndColAmount):
     for row in range(rowAndColAmount):
         for col in range(rowAndColAmount):
-            if state[row][col].stateValue == 0:
+            if state.stateValue[row][col] == 0:
                 return row, col
 
 
 # generate a new state
 def generateState(currState, zeroRow, zeroCol, swapRow, swapCol):
-    temp = currState.stateValue.clone()
+    temp = copy.deepcopy(currState.stateValue)
     temp[zeroRow][zeroCol] = temp[swapRow][swapCol]
     temp[swapRow][swapCol] = 0
     return SearchableState(temp)
@@ -27,6 +29,7 @@ class SearchableXPuzzle:
         self.rowAndColAmount = len(startState)
         self.startState = SearchableState(startState)
         self.goalState = SearchableState(startState)
+        self.startState.stateCost = 0
 
     def getAllPossibleStates(self, state):
         """
