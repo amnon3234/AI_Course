@@ -1,5 +1,6 @@
 # temp values
 from searchable.SearchableXPuzzle import SearchableXPuzzle
+from searchAlgorithms.IDS import IDS
 
 algoNumber = 1
 rowColSize = 4
@@ -19,3 +20,4 @@ def stringToMatrix(string, matrixLength):
 
 
 problem = SearchableXPuzzle(stringToMatrix(boardState, rowColSize), stringToMatrix(goalState, rowColSize))
+print(IDS(problem))
