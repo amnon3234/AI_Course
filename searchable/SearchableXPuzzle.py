@@ -28,7 +28,7 @@ class SearchableXPuzzle:
         """
         self.rowAndColAmount = len(startState)
         self.startState = SearchableState(startState)
-        self.goalState = SearchableState(startState)
+        self.goalState = SearchableState(goalState)
         self.startState.stateCost = 0
 
     def getAllPossibleStates(self, state):
@@ -43,22 +43,26 @@ class SearchableXPuzzle:
 
         if row != 0:
             newState = generateState(state, row, col, row - 1, col)
+            newState.stateFather = state
             newState.stateCost = state.stateCost + 1
             neighbors.append(newState)
 
         if row != self.rowAndColAmount - 1:
             newState = generateState(state, row, col, row + 1, col)
             newState.stateCost = state.stateCost + 1
+            newState.stateFather = state
             neighbors.append(newState)
 
         if col != 0:
             newState = generateState(state, row, col, row, col - 1)
             newState.stateCost = state.stateCost + 1
+            newState.stateFather = state
             neighbors.append(newState)
 
         if col != self.rowAndColAmount - 1:
             newState = generateState(state, row, col, row, col + 1)
             newState.stateCost = state.stateCost + 1
+            newState.stateFather = state
             neighbors.append(newState)
 
         return neighbors
@@ -71,3 +75,25 @@ class SearchableXPuzzle:
         :return: state is goal state ? true : false
         """
         return state == self.goalState
+
+    def getRoute(self, state):
+        if not isinstance(state, SearchableState):
+            return False
+        currentState = state
+        fatherState = state.stateFather
+        route = []
+        while fatherState is not None:
+            currRow, currCol = searchFor0Pos(currentState, self.rowAndColAmount)
+            fatherRow, fatherCol = searchFor0Pos(fatherState, self.rowAndColAmount)
+            if currRow < fatherRow:
+                route.append('D')
+            elif currRow > fatherRow:
+                route.append('U')
+            elif currCol < fatherCol:
+                route.append('R')
+            else:
+                route.append('L')
+            currentState = fatherState
+            fatherState = currentState.stateFather
+        route.reverse()
+        return route

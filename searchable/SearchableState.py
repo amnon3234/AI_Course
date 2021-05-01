@@ -22,3 +22,10 @@ class SearchableState:
 
     def __str__(self):
         return str(self.stateValue)
+
+    def getHashKey(self):
+        hashString = ''
+        for row in self.stateValue:
+            for col in row:
+                hashString += str(col) + '-'
+        return hashString
