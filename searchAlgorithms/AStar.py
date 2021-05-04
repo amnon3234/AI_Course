@@ -29,12 +29,12 @@ def a_star(problem):
     o_list.append(init_state)
     while o_list:
         current, index = best_fvalue(o_list)
-        if problem.isGoalState(current):
-            return problem.getRoute(current)
+        if problem.is_goal_state(current):
+            return problem.get_route(current)
         o_list.pop(index)
         c_list.append(current)
 
-        for move in problem.getAllPossibleStates(current):
+        for move in problem.get_all_possible_states(current):
             ok = False  # checking in closedList
             for i, item in enumerate(c_list):
                 if item == move:

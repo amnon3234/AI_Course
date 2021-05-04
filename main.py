@@ -3,10 +3,7 @@ from searchAlgorithms.BFS import BFS
 from searchable.SearchableXPuzzle import SearchableXPuzzle
 from searchAlgorithms.IDS import IDS
 
-# CR: In python we use snakeCase and not camelCase
-# like : def generate_goal_state(matrix_length):
-# need to change all the files :\
-def generateGoalState(matrixLength):
+def generate_goal_state(matrixLength):
     matrix = []
     for row in range(matrixLength):
         matrixRow = []
@@ -17,7 +14,7 @@ def generateGoalState(matrixLength):
     return matrix
 
 
-def stringToMatrix(string, matrixLength):
+def string_to_matrix(string, matrixLength):
     temp = string.split('-')
     matrix = []
     for row in range(matrixLength):
@@ -32,21 +29,19 @@ def main():
     iFile = open("input.txt", "r")
     algo, size, state = int(iFile.readline().replace('\n', '')), int(iFile.readline().replace('\n', '')), \
                         iFile.readline().replace('\n', '')
-    startState = stringToMatrix(state, size)
-    goalState = generateGoalState(size)
+    startState = string_to_matrix(state, size)
+    goalState = generate_goal_state(size)
     problem = SearchableXPuzzle(startState, goalState)
 
-    # CR : Why not switch case?
-    if algo == 1:
-        routeToGoal = IDS(problem)
-        #CR : in python3, print function has been replaced by the print() function, meaning that we have to wrap the object that we want to print in parantheses.
-        print routeToGoal
-    elif algo == 2:
-        # CR : same as above
-        routeToGoal = BFS(problem)
-        print routeToGoal
-    elif algo == 3:
-        pass
+    match algo:
+        case 1:
+            routeToGoal = IDS(problem)
+            print(routeToGoal)
+        case 2:
+            routeToGoal = BFS(problem)
+            print(routeToGoal)
+        default:
+            pass
 
 
 main()

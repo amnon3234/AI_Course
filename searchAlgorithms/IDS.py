@@ -2,12 +2,12 @@ from searchable.SearchableXPuzzle import SearchableXPuzzle
 
 
 def DFS(problem, currentState, maxDepth, oList, cList):
-    if problem.isGoalState(currentState):
-        return True, problem.getRoute(currentState)
+    if problem.is_goal_state(currentState):
+        return True, problem.get_route(currentState)
     if maxDepth <= 0:
         return False, None
-    for state in problem.getAllPossibleStates(currentState):
-        stateHash = state.getHashKey()
+    for state in problem.get_all_possible_states(currentState):
+        stateHash = state.get_hash_key()
         if stateHash in cList:
             continue
         if stateHash in oList and state.stateCost >= oList[stateHash].stateCost:
@@ -17,7 +17,7 @@ def DFS(problem, currentState, maxDepth, oList, cList):
         if res:
             return res, route
 
-    currentStateHash = currentState.getHashKey()
+    currentStateHash = currentState.get_hash_key()
     if currentStateHash in oList:
         del oList[currentStateHash]
     cList[currentStateHash] = currentState

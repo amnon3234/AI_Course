@@ -4,7 +4,7 @@ from searchable.SearchableState import SearchableState
 
 
 # search for the empty place in the state
-def searchFor0Pos(state, rowAndColAmount):
+def search_for_pos(state, rowAndColAmount):
     for row in range(rowAndColAmount):
         for col in range(rowAndColAmount):
             if state.stateValue[row][col] == 0:
@@ -12,7 +12,7 @@ def searchFor0Pos(state, rowAndColAmount):
 
 
 # generate a new state
-def generateState(currState, zeroRow, zeroCol, swapRow, swapCol):
+def generate_state(currState, zeroRow, zeroCol, swapRow, swapCol):
     temp = copy.deepcopy(currState.stateValue)
     temp[zeroRow][zeroCol] = temp[swapRow][swapCol]
     temp[swapRow][swapCol] = 0
@@ -31,67 +31,67 @@ class SearchableXPuzzle:
         self.goalState = SearchableState(goalState)
         self.startState.stateCost = 0
 
-    def getAllPossibleStates(self, state):
+    def get_all_possible_states(self, state):
         """
         used to receive all relevant possible states.
 
         :param state: state to create neighbors to
         :return: array of neighbors states
         """
-        SearchableState.checkInstance(state)
+        SearchableState.check_instance(state)
         neighbors = []
-        row, col = searchFor0Pos(state, self.rowAndColAmount)
+        row, col = search_for_pos(state, self.rowAndColAmount)
 
         if row != 0:
-            newState = generateState(state, row, col, row - 1, col)
+            newState = generate_state(state, row, col, row - 1, col)
             newState.stateFather = state
             newState.stateCost = state.stateCost + 1
             neighbors.append(newState)
 
         if row != self.rowAndColAmount - 1:
-            newState = generateState(state, row, col, row + 1, col)
+            newState = generate_state(state, row, col, row + 1, col)
             newState.stateCost = state.stateCost + 1
             newState.stateFather = state
             neighbors.append(newState)
 
         if col != 0:
-            newState = generateState(state, row, col, row, col - 1)
+            newState = generate_state(state, row, col, row, col - 1)
             newState.stateCost = state.stateCost + 1
             newState.stateFather = state
             neighbors.append(newState)
 
         if col != self.rowAndColAmount - 1:
-            newState = generateState(state, row, col, row, col + 1)
+            newState = generate_state(state, row, col, row, col + 1)
             newState.stateCost = state.stateCost + 1
             newState.stateFather = state
             neighbors.append(newState)
 
         return neighbors
 
-    def isGoalState(self, state):
+    def is_goal_state(self, state):
         """
         used to check if current state is the goal state
 
         :param state: state to check
         :return: state is goal state ? true : false
         """
-        SearchableState.checkInstance(state)
+        SearchableState.check_instance(state)
         return state == self.goalState
 
-    def getRoute(self, state):
+    def get_route(self, state):
         """
         used to receive the route from start state
 
         :param state:
         :return: route from start state to this state
         """
-        SearchableState.checkInstance(state)
+        SearchableState.check_instance(state)
         currentState = state
         fatherState = state.stateFather
         route = []
         while fatherState is not None:
-            currRow, currCol = searchFor0Pos(currentState, self.rowAndColAmount)
-            fatherRow, fatherCol = searchFor0Pos(fatherState, self.rowAndColAmount)
+            currRow, currCol = search_for_pos(currentState, self.rowAndColAmount)
+            fatherRow, fatherCol = search_for_pos(fatherState, self.rowAndColAmount)
             if currRow < fatherRow:
                 route.append('D')
             elif currRow > fatherRow:

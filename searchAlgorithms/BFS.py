@@ -16,17 +16,17 @@ def BFS(problem):
     queue.append(initState)
     while len(queue) > 0:
         currState = queue.pop(0)
-        if problem.isGoalState(currState):
-            return problem.getRoute(currState)
-        for state in problem.getAllPossibleStates(currState):
-            stateHash = state.getHashKey()
+        if problem.is_goal_state(currState):
+            return problem.get_route(currState)
+        for state in problem.get_all_possible_states(currState):
+            stateHash = state.get_hash_key()
             if stateHash in cList:
                 continue
             if stateHash in oList and state.stateCost >= oList[stateHash].stateCost:
                 continue
             oList[stateHash] = state
             queue.append(state)
-        currentStateHash = currState.getHashKey()
+        currentStateHash = currState.get_hash_key()
         if currentStateHash in oList:
             del oList[currentStateHash]
         cList[currentStateHash] = currState

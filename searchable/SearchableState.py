@@ -10,17 +10,17 @@ class SearchableState:
         self.stateCost = sys.maxint
         self.stateFather = None
 
-    def compareTo(self, other):
+    def compare_to(self, other):
         """
         Used to determine who will come first in a sort
 
         :param other: SearchableState instance
         :return: 0 for equality, - self < other, + self > other
         """
-        self.checkInstance(other)
+        self.check_instance(other)
         return self.stateCost - other.stateCost
 
-    def getHashKey(self):
+    def get_hash_key(self):
         """
         Used to get a unique hash key for any state with the same value
 
@@ -45,7 +45,7 @@ class SearchableState:
         :param other: SearchableState instance
         :return: self == other ? True : False
         """
-        self.checkInstance(other)
+        self.check_instance(other)
         return self.stateValue == other.stateValue
 
     def __ne__(self, other):
@@ -58,6 +58,6 @@ class SearchableState:
         return not self.__eq__(other)
 
     @staticmethod
-    def checkInstance(var):
+    def check_instance(var):
         if not isinstance(var, SearchableState):
             raise Exception('state must be an instance of searchable state')
