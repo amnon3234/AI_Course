@@ -1,30 +1,30 @@
 from searchable.SearchableXPuzzle import SearchableXPuzzle
 
 
-def DFS(problem, currentState, maxDepth, oList, cList):
-    if problem.is_goal_state(currentState):
-        return True, problem.get_route(currentState)
-    if maxDepth <= 0:
+def dfs(problem, current_state, max_depth, o_list, c_list):
+    if problem.is_goal_state(current_state):
+        return True, problem.get_route(current_state)
+    if max_depth <= 0:
         return False, None
-    for state in problem.get_all_possible_states(currentState):
-        stateHash = state.get_hash_key()
-        if stateHash in cList:
+    for state in problem.get_all_possible_states(current_state):
+        state_hash = state.get_hash_key()
+        if state_hash in c_list:
             continue
-        if stateHash in oList and state.stateCost >= oList[stateHash].stateCost:
+        if state_hash in o_list and state.stateCost >= o_list[state_hash].stateCost:
             continue
-        oList[stateHash] = state
-        res, route = DFS(problem, state, maxDepth - 1, oList, cList)
+        o_list[state_hash] = state
+        res, route = dfs(problem, state, max_depth - 1, o_list, c_list)
         if res:
             return res, route
 
-    currentStateHash = currentState.get_hash_key()
-    if currentStateHash in oList:
-        del oList[currentStateHash]
-    cList[currentStateHash] = currentState
+    current_state_hash = current_state.get_hash_key()
+    if current_state_hash in o_list:
+        del o_list[current_state_hash]
+    c_list[current_state_hash] = current_state
     return False, None
 
 
-def IDS(problem):
+def ids(problem):
     """
     Used to find goal state using the IDS algorithm
 
@@ -34,9 +34,9 @@ def IDS(problem):
     if not isinstance(problem, SearchableXPuzzle):
         raise Exception('problem must be instance of SearchableXPuzzle')
     depth = 0
-    initState = problem.startState
-    res, route = DFS(problem, initState, depth, {}, {})
+    init_state = problem.startState
+    res, route = dfs(problem, init_state, depth, {}, {})
     while not res:
         depth += 1
-        res, route = DFS(problem, initState, depth, {}, {})
+        res, route = dfs(problem, init_state, depth, {}, {})
     return route

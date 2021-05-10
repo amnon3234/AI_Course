@@ -4,31 +4,31 @@ from searchable.SearchableState import SearchableState
 
 
 # search for the empty place in the state
-def search_for_pos(state, rowAndColAmount):
-    for row in range(rowAndColAmount):
-        for col in range(rowAndColAmount):
+def search_for_pos(state, row_and_col_amount):
+    for row in range(row_and_col_amount):
+        for col in range(row_and_col_amount):
             if state.stateValue[row][col] == 0:
                 return row, col
 
 
 # generate a new state
-def generate_state(currState, zeroRow, zeroCol, swapRow, swapCol):
-    temp = copy.deepcopy(currState.stateValue)
-    temp[zeroRow][zeroCol] = temp[swapRow][swapCol]
-    temp[swapRow][swapCol] = 0
+def generate_state(current_state, zero_row, zero_col, swap_row, swap_col):
+    temp = copy.deepcopy(current_state.stateValue)
+    temp[zero_row][zero_col] = temp[swap_row][swap_col]
+    temp[swap_row][swap_col] = 0
     return SearchableState(temp)
 
 
 class SearchableXPuzzle:
 
-    def __init__(self, startState, goalState):
+    def __init__(self, start_state, goal_state):
         """
-        :param startState problem start state as a matrix
-        :param goalState problem goal state as a matrix
+        :param start_state problem start state as a matrix
+        :param goal_state problem goal state as a matrix
         """
-        self.rowAndColAmount = len(startState)
-        self.startState = SearchableState(startState)
-        self.goalState = SearchableState(goalState)
+        self.rowAndColAmount = len(start_state)
+        self.startState = SearchableState(start_state)
+        self.goalState = SearchableState(goal_state)
         self.startState.stateCost = 0
 
     def get_all_possible_states(self, state):
@@ -43,28 +43,28 @@ class SearchableXPuzzle:
         row, col = search_for_pos(state, self.rowAndColAmount)
 
         if row != 0:
-            newState = generate_state(state, row, col, row - 1, col)
-            newState.stateFather = state
-            newState.stateCost = state.stateCost + 1
-            neighbors.append(newState)
+            new_state = generate_state(state, row, col, row - 1, col)
+            new_state.stateFather = state
+            new_state.stateCost = state.stateCost + 1
+            neighbors.append(new_state)
 
         if row != self.rowAndColAmount - 1:
-            newState = generate_state(state, row, col, row + 1, col)
-            newState.stateCost = state.stateCost + 1
-            newState.stateFather = state
-            neighbors.append(newState)
+            new_state = generate_state(state, row, col, row + 1, col)
+            new_state.stateCost = state.stateCost + 1
+            new_state.stateFather = state
+            neighbors.append(new_state)
 
         if col != 0:
-            newState = generate_state(state, row, col, row, col - 1)
-            newState.stateCost = state.stateCost + 1
-            newState.stateFather = state
-            neighbors.append(newState)
+            new_state = generate_state(state, row, col, row, col - 1)
+            new_state.stateCost = state.stateCost + 1
+            new_state.stateFather = state
+            neighbors.append(new_state)
 
         if col != self.rowAndColAmount - 1:
-            newState = generate_state(state, row, col, row, col + 1)
-            newState.stateCost = state.stateCost + 1
-            newState.stateFather = state
-            neighbors.append(newState)
+            new_state = generate_state(state, row, col, row, col + 1)
+            new_state.stateCost = state.stateCost + 1
+            new_state.stateFather = state
+            neighbors.append(new_state)
 
         return neighbors
 
@@ -86,21 +86,21 @@ class SearchableXPuzzle:
         :return: route from start state to this state
         """
         SearchableState.check_instance(state)
-        currentState = state
-        fatherState = state.stateFather
+        current_state = state
+        father_state = state.stateFather
         route = []
-        while fatherState is not None:
-            currRow, currCol = search_for_pos(currentState, self.rowAndColAmount)
-            fatherRow, fatherCol = search_for_pos(fatherState, self.rowAndColAmount)
-            if currRow < fatherRow:
+        while father_state is not None:
+            curr_row, curr_col = search_for_pos(current_state, self.rowAndColAmount)
+            father_row, father_col = search_for_pos(father_state, self.rowAndColAmount)
+            if curr_row < father_row:
                 route.append('D')
-            elif currRow > fatherRow:
+            elif curr_row > father_row:
                 route.append('U')
-            elif currCol < fatherCol:
+            elif curr_col < father_col:
                 route.append('R')
             else:
                 route.append('L')
-            currentState = fatherState
-            fatherState = currentState.stateFather
+            current_state = father_state
+            father_state = current_state.stateFather
         route.reverse()
         return route

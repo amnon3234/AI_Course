@@ -2,12 +2,12 @@ import sys
 
 
 class SearchableState:
-    def __init__(self, stateValue):
+    def __init__(self, state_value):
         """
-        :param stateValue: matrix of values
+        :param state_value: matrix of values
         """
-        self.stateValue = stateValue
-        self.stateCost = sys.maxint
+        self.stateValue = state_value
+        self.stateCost = sys.maxsize
         self.stateFather = None
 
     def compare_to(self, other):
@@ -26,11 +26,11 @@ class SearchableState:
 
         :return: hashKey string
         """
-        hashString = ''
+        hash_string = ''
         for row in self.stateValue:
             for col in row:
-                hashString += str(col) + '-'
-        return hashString
+                hash_string += str(col) + '-'
+        return hash_string
 
     def __str__(self):
         """

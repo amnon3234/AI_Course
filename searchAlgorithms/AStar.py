@@ -1,7 +1,7 @@
 from searchable.SearchableXPuzzle import SearchableXPuzzle
 
 
-def best_fvalue(o_list):
+def best_value(o_list):
     f = o_list[0].f
     index = 0
     for i, item in enumerate(o_list):
@@ -28,7 +28,7 @@ def a_star(problem):
     init_state = problem.startState
     o_list.append(init_state)
     while o_list:
-        current, index = best_fvalue(o_list)
+        current, index = best_value(o_list)
         if problem.is_goal_state(current):
             return problem.get_route(current)
         o_list.pop(index)
