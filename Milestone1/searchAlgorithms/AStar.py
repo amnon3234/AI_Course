@@ -28,20 +28,20 @@ def a_star(problem):
     init_state = problem.startState
     o_list.append(init_state)
     while o_list:
-        current, index = best_value(o_list)
-        if problem.is_goal_state(current):
-            return problem.get_route(current)
+        current_state, index = best_value(o_list)
+        if problem.is_goal_state(current_state):
+            return problem.get_route(current_state)
         o_list.pop(index)
-        c_list.append(current)
+        c_list.append(current_state)
 
-        for move in problem.get_all_possible_states(current):
+        for move in problem.get_all_possible_states(current_state):
             ok = False  # checking in closedList
             for i, item in enumerate(c_list):
                 if item == move:
                     ok = True
                     break
             if not ok:  # not in closed list
-                new_g = current.g + 1
+                new_g = current_state.g + 1
                 present = False
 
                 # openList includes move
@@ -51,12 +51,12 @@ def a_star(problem):
                         if new_g < o_list[j].g:
                             o_list[j].g = new_g
                             o_list[j].f = o_list[j].g + o_list[j].h
-                            o_list[j].parent = current
+                            o_list[j].parent = current_state
                 if not present:
                     move.g = new_g
                     move.h = move.manhattan()
                     move.f = move.g + move.h
-                    move.parent = current
+                    move.parent = current_state
                     o_list.append(move)
 
         return None
