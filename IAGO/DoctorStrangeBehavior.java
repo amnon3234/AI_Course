@@ -50,16 +50,22 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 	protected Offer getTimingOffer(History history) { return null; }
 
 	@Override
-	protected Offer getAcceptOfferFollowup(History history) { return null; }
+	protected Offer getAcceptOfferFollowup(History history) { 
+		this.utils.modifyOfferLedger(1);
+		return this.getNextOffer(history);
+	}
 	
 	@Override
-	protected Offer getFirstOffer(History history) { return null; }
+	protected Offer getFirstOffer(History history) { return this.getNextOffer(history); }
 
 	@Override
 	protected int getAcceptMargin() { return Math.max(0, Math.min(this.gameSpec.getNumberIssues(), this.adverseEvents)); }
 
 	@Override
-	protected Offer getRejectOfferFollowup(History history) { return null; }
+	protected Offer getRejectOfferFollowup(History history) { 
+		this.utils.modifyOfferLedger(-1);
+		return this.getNextOffer(history);
+	}
 
 	@Override
 	protected Offer getFinalOffer(History history) {
