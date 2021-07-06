@@ -56,7 +56,7 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 	protected Offer getFirstOffer(History history) { return null; }
 
 	@Override
-	protected int getAcceptMargin() { return Math.max(0, Math.min(this.gameSpec.getNumberIssues(), adverseEvents)); }
+	protected int getAcceptMargin() { return Math.max(0, Math.min(this.gameSpec.getNumberIssues(), this.adverseEvents)); }
 
 	@Override
 	protected Offer getRejectOfferFollowup(History history) { return null; }
