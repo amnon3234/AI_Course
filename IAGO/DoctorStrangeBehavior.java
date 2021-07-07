@@ -104,10 +104,10 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 			}
 		currentHighestRank = numberOfIssues + 1;
 		for(int i  = 0; i < numberOfIssues; i++)
-			if(undecidedItems[i] > 0 && AgentDesires.get(i) < max) {
+			if(undecidedItems[i] > 0 && AgentDesires.get(i) < currentHighestRank) {
 				agentSecondDesiredItemIndex = agentDesiredItemIndex;
 				agentDesiredItemIndex = i;
-				max = AgentDesires.get(i);
+				currentHighestRank = AgentDesires.get(i);
 			}
 		
 		int favorStatus = this.utils.getVerbalLedger();
