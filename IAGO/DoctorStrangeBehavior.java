@@ -16,7 +16,7 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 	private int adverseEvents = 0;
 	
 	// Constructor
-	public DoctorStrangeBehavior (LedgerBehavior lb) { super(); }
+	public DoctorStrangeBehavior () { super(); }
 	
 	// Getters
 	@Override
@@ -110,21 +110,20 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 				currentHighestRank = AgentDesires.get(i);
 			}
 		
-		int favorStatus = this.utils.getVerbalLedger();
 		if(userDesiredItemIndex == agentDesiredItemIndex) {
-			int itemIndex, userItemAmount, undecidedItemAmount, agentItemAmount;
+			int itemIndex, userItemAmount, undecidedItemAmount = 0, agentItemAmount;
 			int itemsAmount = undecidedItems[userDesiredItemIndex];
 
 			itemIndex = userDesiredItemIndex;
 			
-			if (favorStatus < 0) {
+			if (this.utils.getVerbalLedger() < 0) {
 				this.utils.modifyOfferLedger(-1);
 				agentItemAmount = this.allocated.getItem(itemIndex)[0] + itemsAmount;
 				undecidedItemAmount = 0;
 				userItemAmount = this.allocated.getItem(itemIndex)[2];
 				
-			} else if (flavorStatue > 0) {
-				if(agentSecondDesiredItemIndex !== -1) {
+			} else if (this.utils.getVerbalLedger() > 0) {
+				if(agentSecondDesiredItemIndex != -1) {
 					this.utils.modifyOfferLedger(0);
 
 					agentItemAmount = this.allocated.getItem(itemIndex)[0];
@@ -133,7 +132,7 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 
 					int tempIndex = agentSecondDesiredItemIndex;
 					int tempAgentAmount = this.allocated.getItem(tempIndex)[0] + undecidedItems[tempIndex] + this.allocated.getItem(tempIndex)[2];
-					res.setItem(tempIndex, tempAgentAmount, 0, 0);
+					res.setItem(tempIndex, new int[] { tempAgentAmount, 0, 0 });
 
 				} else {
 					this.utils.modifyOfferLedger(1);
@@ -157,10 +156,10 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 					agentItemAmount = this.allocated.getItem(itemIndex)[0];
 					userItemAmount = this.allocated.getItem(itemIndex)[2] + 1;
 
-					if(agentSecondDesiredItemIndex !== -1) {
+					if(agentSecondDesiredItemIndex != -1) {
 						int tempIndex = agentSecondDesiredItemIndex;
 						int tempAgentAmount = this.allocated.getItem(tempIndex)[0] + undecidedItems[tempIndex] + this.allocated.getItem(tempIndex)[2];
-						res.setItem(tempIndex, tempAgentAmount, 0, 0);
+						res.setItem(tempIndex,  new int[] { tempAgentAmount, 0, 0 });
 					} else this.utils.modifyOfferLedger(1);
 				}
 			}
@@ -172,21 +171,21 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 		int[] userState = new int[3];
 		int[] agentState = new int[3];
 
-		if (favorStatus < 0) {
+		if (this.utils.getVerbalLedger() < 0) {
 			this.utils.modifyOfferLedger(-1);
 			agentState[0] = this.allocated.getItem(agentDesiredItemIndex)[0] + undecidedItems[agentDesiredItemIndex] + this.allocated.getItem(agentDesiredItemIndex)[2];
 			agentState[1] = 0;
 			agentState[2] = 0;
 			res.setItem(agentDesiredItemIndex, agentState);
 
-			if(userSecondDesiredItemIndex !== agentDesiredItemIndex) {
+			if(userSecondDesiredItemIndex != agentDesiredItemIndex) {
 				userState[0] = this.allocated.getItem(userSecondDesiredItemIndex)[0];
 				userState[1] = 0;
 				userState[2] = this.allocated.getItem(userSecondDesiredItemIndex)[2] + undecidedItems[userSecondDesiredItemIndex];
 				res.setItem(userSecondDesiredItemIndex, userState);
 			}
 
-		} else if (favorStatus > 0) {
+		} else if (this.utils.getVerbalLedger() > 0) {
 			this.utils.modifyOfferLedger(1);
 			userState[0] = this.allocated.getItem(userDesiredItemIndex)[0];
 			userState[1] = 0;
