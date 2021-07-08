@@ -59,7 +59,7 @@ public class DoctorStrangeExpression extends IAGOCoreExpression implements Expre
                 default:
                     return null;
             }
-        } else if (userEvent.getType().equals(Event.EventClass.FORMAL_ACCEPT) {
+        } else if (userEvent.getType().equals(Event.EventClass.FORMAL_ACCEPT)) {
             return "happy";
         }
         else{

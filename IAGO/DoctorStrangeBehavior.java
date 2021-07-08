@@ -178,7 +178,7 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 			agentState[2] = 0;
 			res.setItem(agentDesiredItemIndex, agentState);
 
-			if(userSecondDesiredItemIndex != agentDesiredItemIndex) {
+			if(userSecondDesiredItemIndex != agentDesiredItemIndex && userSecondDesiredItemIndex >= 0) {
 				userState[0] = this.allocated.getItem(userSecondDesiredItemIndex)[0];
 				userState[1] = 0;
 				userState[2] = this.allocated.getItem(userSecondDesiredItemIndex)[2] + undecidedItems[userSecondDesiredItemIndex];
