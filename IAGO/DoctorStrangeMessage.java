@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import edu.usc.ict.iago.agent.RepeatedFavorBehavior.LedgerBehavior;
 import edu.usc.ict.iago.utils.Event;
 import edu.usc.ict.iago.utils.GameSpec;
 import edu.usc.ict.iago.utils.History;
@@ -16,7 +15,7 @@ import edu.usc.ict.iago.utils.Preference.Relation;
 import edu.usc.ict.iago.utils.ServletUtils;
 
 
-public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePolicy {
+public class DoctorStrangeMessage extends IAGOCoreMessage implements MessagePolicy {
     protected final String[] proposal = {"I think this deal is good for the both of us.",
             "I think you'll find this offer to be satisfactory.",
             "I think this arrangement is fair.",
@@ -106,13 +105,13 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
     }
 
     public String getWaitingLang(History history, GameSpec game) {
-        if (vhIdleQuestions.length != 0) {//if the questions in this array haven't all been removed, pick another one to use
+        if (vhIdleQuestions.length != 0) {
             int rand = (int) (Math.random() * vhIdleQuestions.length);
             String randQ = vhIdleQuestions[rand];
             ArrayList<String> temp = new ArrayList<String>((List<String>) Arrays.asList(vhIdleQuestions));
             temp.remove(rand);
             Object[] temp2 = temp.toArray();
-            vhIdleQuestions = Arrays.copyOf(temp2, temp2.length, String[].class);        //remove questions from this array once used (will eventually be empty at which point P++ randomly picks from vhWaiting below)
+            vhIdleQuestions = Arrays.copyOf(temp2, temp2.length, String[].class);        
             return randQ;
         }
         return vhWaiting[(int) (Math.random() * vhWaiting.length)];
@@ -155,12 +154,26 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
 
     @Override
     protected Event getFavorBehavior(History history, GameSpec game, Event event) {
-        return null;
+        if (utils.getLedger() > 0) {
+			return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_REQUEST, 
+					"Excuse me, but you still owe me a favor.  Accept my favor request, so you can pay me back!",
+					(int) (1000*game.getMultiplier()));
+
+        } else if (utils.getLedger() < 0) {
+			utils.modifyVerbalLedger(1);
+			return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_ACCEPT, 
+					"I think I still owe you a favor!  Let me just pay that back for you.",
+					(int) (1000*game.getMultiplier()));
+		}
+
+        return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_REQUEST, 
+					"Excuse me, but there is a super-valuable item here for me!  If you accept my favor request, I'll promise to pay you back in a future round!",
+					(int) (1000*game.getMultiplier()));
     }
 
     public Event getVerboseMessageResponse(History history, GameSpec game, Event ePrime) {
 
-        int randomDelay = new Random().nextInt(2000) + 3000;            //causes message delays to vary in a range between 3-5 seconds to appear more human-like
+        int randomDelay = new Random().nextInt(2000) + 3000;   
         int delay = (int) (randomDelay * game.getMultiplier());
         int value = -1;
         int issue1 = -1;
@@ -173,7 +186,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
             Event resp = new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.GENERIC_POS, str, delay);
             return resp;
         } else if (ePrime.getType() == Event.EventClass.SEND_EXPRESSION) {
-            return null; // Disables responding to emotions
+            return null; 
         }
 
         if (ePrime.getType() == Event.EventClass.TIME) {
@@ -182,15 +195,14 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
             return resp;
         }
 
-        //make sure we have a message
         if (ePrime.getType() != Event.EventClass.SEND_MESSAGE)
             return null;
 
         Preference p = ePrime.getPreference();
-        if (p != null) //a preference was expressed
+        if (p != null) 
         {
             String str = "";
-            if (p.isQuery() && this.isWithholding) { //asked about preferences
+            if (p.isQuery() && this.isWithholding) { 
 
                 str = "I don't think it best to reveal my intentions yet. Maybe if you did first...";
                 Event resp = new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.PREF_WITHHOLD, str, delay);
@@ -200,7 +212,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
             ServletUtils.log("No preference detected in user message.", ServletUtils.DebugLevels.DEBUG);
         }
 
-        //details for each response
+
         Event.SubClass sc = Event.SubClass.NONE;
 
         int best = utils.findAdversaryItemIndex(game, 1);
@@ -209,7 +221,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
 
 
         int offerCount = 0;
-        //Calculate offer counts
+
         for (Event e : history.getHistory())
             if (e.getType() == Event.EventClass.SEND_OFFER)
                 offerCount++;
@@ -230,7 +242,6 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
             }
         }
 
-        //MAIN RESPONSE
         switch (ePrime.getSubClass()) {
             case GENERIC_POS:
                 sc = Event.SubClass.PREF_INFO;
@@ -313,8 +324,10 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                 }
                 break;
             case OFFER_REQUEST_POS:
+			    utils.modifyVerbalLedger(1);
                 return null;
             case OFFER_REQUEST_NEG:
+			    utils.modifyVerbalLedger(-1);
                 str = "Alright, what do you think of this?";
                 sc = Event.SubClass.OFFER_PROPOSE;
                 break;
@@ -384,10 +397,6 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                     }
                 }
                 break;
-            case OFFER_REJECT:
-            	sc = Event.SubClass.GENERIC_NEG;
-            	str = this.getRejectLang(history, game);
-            	break;
             case OFFER_ACCEPT:
                 sc = Event.SubClass.GENERIC_POS;
                 str = this.getAcceptLang(history, game);

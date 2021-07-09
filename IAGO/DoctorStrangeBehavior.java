@@ -116,13 +116,13 @@ public class DoctorStrangeBehavior extends IAGOCoreBehavior implements BehaviorP
 
 			itemIndex = userDesiredItemIndex;
 			
-			if (this.utils.getVerbalLedger() < 0) {
+			if (this.utils.getVerbalLedger() > 0) {
 				this.utils.modifyOfferLedger(-1);
 				agentItemAmount = this.allocated.getItem(itemIndex)[0] + itemsAmount;
 				undecidedItemAmount = 0;
 				userItemAmount = this.allocated.getItem(itemIndex)[2];
 				
-			} else if (this.utils.getVerbalLedger() > 0) {
+			} else if (this.utils.getVerbalLedger() < 0) {
 				if(agentSecondDesiredItemIndex != -1) {
 					this.utils.modifyOfferLedger(0);
 
