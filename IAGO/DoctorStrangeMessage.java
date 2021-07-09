@@ -81,7 +81,9 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
     }
 
     @Deprecated
-    public void updateOrderings(ArrayList<ArrayList<Integer>> orderings) { return; }
+    public void updateOrderings(ArrayList<ArrayList<Integer>> orderings) {
+        return;
+    }
 
     public String getProposalLang(History history, GameSpec game) {
         return proposal[(int) (Math.random() * proposal.length)];
@@ -104,7 +106,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
     }
 
     public String getWaitingLang(History history, GameSpec game) {
-        if (vhIdleQuestions.length != 0) {                                    //if the questions in this array haven't all been removed, pick another one to use
+        if (vhIdleQuestions.length != 0) {//if the questions in this array haven't all been removed, pick another one to use
             int rand = (int) (Math.random() * vhIdleQuestions.length);
             String randQ = vhIdleQuestions[rand];
             ArrayList<String> temp = new ArrayList<String>((List<String>) Arrays.asList(vhIdleQuestions));
@@ -120,23 +122,22 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
         return lying;
     }
 
-    private String getEmotionResponse(History history, GameSpec game, Event e) {
-
-        if (e.getType() != Event.EventClass.SEND_EXPRESSION)
+    private String getEmotionResponse(History history, GameSpec game, Event event) {
+        if (event.getType() != Event.EventClass.SEND_EXPRESSION)
             throw new UnsupportedOperationException("The last event wasn't an expresion--this method is inappropriate.");
-        if (e.getMessage().equals("sad") || e.getMessage().equals("angry"))
+        if (event.getMessage().equals("sad") || event.getMessage().equals("angry"))
             return "What's wrong?";
-        else if (e.getMessage().equals("happy"))
+        else if (event.getMessage().equals("happy"))
             return "Well, at least you're happy!";
-        else if (e.getMessage().equals("surprised"))
+        else if (event.getMessage().equals("surprised"))
             return "What, did I surprise you?";
-        else if (e.getMessage().equals("neutral"))
+        else if (event.getMessage().equals("neutral"))
             return null;
         return "I don't know what face you just made!";
     }
 
     protected String getEndOfTimeResponse() {
-        return "We're almost out of time!  Accept this quickly!";
+        return "We're almost out of time! Accept this quickly!";
     }
 
     protected String getSemiFairResponse() {
@@ -153,21 +154,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
     }
 
     @Override
-    protected Event getFavorBehavior(History history, GameSpec game, Event e) {
-        if (lb != LedgerBehavior.NONE && utils.isImportantGame())
-            return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_REQUEST,
-                    "Excuse me, but there is a super-valuable item here for me!  If you accept my favor request, I'll promise to pay you back in a future round!",
-                    (int) (1000 * game.getMultiplier()));
-        else if (lb != LedgerBehavior.NONE && utils.getLedger() > 0)
-            return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_REQUEST,
-                    "Excuse me, but you still owe me a favor.  Accept my favor request, so you can pay me back!",
-                    (int) (1000 * game.getMultiplier()));
-        else if (lb != LedgerBehavior.NONE && lb != LedgerBehavior.BETRAYING && utils.getLedger() < 0) {
-            utils.modifyVerbalLedger(1);
-            return new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.FAVOR_ACCEPT,
-                    "I think I still owe you a favor!  Let me just pay that back for you.",
-                    (int) (1000 * game.getMultiplier()));
-        }
+    protected Event getFavorBehavior(History history, GameSpec game, Event event) {
         return null;
     }
 
@@ -190,8 +177,8 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
         }
 
         if (ePrime.getType() == Event.EventClass.TIME) {
-            String str = getWaitingLang(history, game);
-            Event resp = new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.TIMING, str, delay);
+            String waitingLang = getWaitingLang(history, game);
+            Event resp = new Event(agentID, Event.EventClass.SEND_MESSAGE, Event.SubClass.TIMING, waitingLang, delay);
             return resp;
         }
 
@@ -222,6 +209,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
 
 
         int offerCount = 0;
+        //Calculate offer counts
         for (Event e : history.getHistory())
             if (e.getType() == Event.EventClass.SEND_OFFER)
                 offerCount++;
@@ -278,7 +266,6 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                             issue1 = best;
                             relation = Relation.BEST;
                             isQuery = true;
-
                         }
                     } else
                         str = "Ok, I understand.  This seems like a fairly even split.";
@@ -289,7 +276,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                     str += "  Also, what about the rest of the undecided items?";
 
                 break;
-            case TIMING: //note: agent responds to this, but this event no longer is a user available action
+            case TIMING:
                 sc = Event.SubClass.GENERIC_POS;
                 int time = 0;
                 int index = history.getHistory().size() - 1;
@@ -326,6 +313,7 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                 }
                 break;
             case OFFER_REQUEST_POS:
+                return null;
             case OFFER_REQUEST_NEG:
                 str = "Alright, what do you think of this?";
                 sc = Event.SubClass.OFFER_PROPOSE;
@@ -396,10 +384,10 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                     }
                 }
                 break;
-            //case OFFER_REJECT:
-            //	sc = Event.SubClass.GENERIC_NEG;
-            //	str = this.getRejectLang(history, game);
-            //	break;
+            case OFFER_REJECT:
+            	sc = Event.SubClass.GENERIC_NEG;
+            	str = this.getRejectLang(history, game);
+            	break;
             case OFFER_ACCEPT:
                 sc = Event.SubClass.GENERIC_POS;
                 str = this.getAcceptLang(history, game);
@@ -413,10 +401,6 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
 
 
                         opponentBATNA = utils.adversaryBATNA;
-                        //TODO here is a good opportunity to improve the system so that it doesn't repeat this same info too often!
-
-                        //str += "In case you forgot, I already have an offer for " + utils.myPresentedBATNA + " points, so anything that gets me more than "
-                        //		+ utils.myPresentedBATNA + " points will do.";
                         str += "Thank you for the information.  That's helpful.";
 
                         value = utils.myPresentedBATNA;
@@ -454,18 +438,14 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
                 sc = Event.SubClass.GENERIC_NEG;
                 break;
             case FAVOR_REQUEST:
-                boolean paysLedger = (lb == LedgerBehavior.FAIR || lb == LedgerBehavior.LIMITED);
-                if (lb == LedgerBehavior.NONE) {
-                    str += "I don't really do favors.";
-                    sc = Event.SubClass.FAVOR_REJECT;
-                } else if (utils.isImportantGame()) {
+                if (utils.isImportantGame()) {
                     str += "Oh I'm sorry, but items this game are worth so much to me...";
                     sc = Event.SubClass.FAVOR_REJECT;
-                } else if (paysLedger && utils.getLedger() < 0) {
+                } else if (utils.getLedger() < 0) {
                     str += "Sure, since you did me that favor before, I'm happy to help this round.";
                     utils.modifyVerbalLedger(1);
                     sc = Event.SubClass.FAVOR_ACCEPT;
-                } else if (!paysLedger && utils.getLedger() < 0) {
+                } else if (utils.getLedger() < 0) {
                     str += "Hmm.  I don't really feel like it.";
                     sc = Event.SubClass.FAVOR_REJECT;
                 } else if (utils.getLedger() == 0) {
@@ -511,6 +491,4 @@ public class RepeatedFavorMessage extends IAGOCoreMessage implements MessagePoli
         return resp;
 
     }
-
-
 }
