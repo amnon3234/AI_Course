@@ -104,12 +104,3 @@ class SearchableXPuzzle:
             father_state = current_state.stateFather
         route.reverse()
         return route
-
-    def manhattan(self):
-        inc = 0
-        h = 0
-        for i in range(3):
-            for j in range(3):
-                h += abs(inc - self.board[i][j])
-            inc += 1
-        return h

@@ -46,16 +46,6 @@ def main():
     else:
         pass
 
-    # match algo:
-    #     case 1:
-    #         route_to_goal = ids(problem)
-    #         print(route_to_goal)
-    #     case 2:
-    #         route_to_goal = bfs(problem)
-    #         print(route_to_goal)
-    #     default:
-    #         pass
-
 
 if __name__ == '__main__':
     main()
